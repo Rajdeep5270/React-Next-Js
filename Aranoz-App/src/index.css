@@ -1,0 +1,23 @@
+:root {
+    --background-color: #ecfdff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+    display: inline-block;
+}
+
+li {
+    list-style-type: none;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
