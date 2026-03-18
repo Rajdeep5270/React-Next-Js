@@ -1,9 +1,6 @@
 import ShowCity from "./ShowCity";
 
-interface City {
-    name: string;
-    population: string;
-}
+
 
 export default function RandomCity(props: any) {
     const cities = [
