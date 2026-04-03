@@ -21,13 +21,13 @@ export default function Header() {
                             </Link>
                         </li>
                         <li>
-                            <Link href="/about" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors duration-200">
-                                About
+                            <Link href="/addBike" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors duration-200">
+                                Add Bike
                             </Link>
                         </li>
                         <li>
-                            <Link href="/contact" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors duration-200">
-                                Contact
+                            <Link href="/viewBike" className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors duration-200">
+                                View Bikes
                             </Link>
                         </li>
                     </ul>
