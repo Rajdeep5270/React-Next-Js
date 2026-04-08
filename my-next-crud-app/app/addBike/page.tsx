@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { bikeDataType } from "../utils/type";
+import { toast } from "react-toastify";
 
 export default function About() {
 
@@ -8,14 +10,7 @@ export default function About() {
     const fuelType = ["Petrol", "Diesel", "EV", "CNG"];
     const features = ["Disc Brake", "Alloy Wheels", "Bluetooth", "Navigation", "USB Charging"];
 
-    type bikeDataType = {
-        id: number,
-        brand: string,
-        bikeName: string,
-        bikePrice: number,
-        fuelType: string,
-        features: string[]
-    }
+
 
     const [bikeData, setBikeData] = useState<bikeDataType>({
         id: Math.floor(Math.random() * 10000),
@@ -26,12 +21,67 @@ export default function About() {
         features: []
     });
 
+    const [error, setError] = useState<any>({});
+
+    const [allBikes, setAllBikes] = useState<bikeDataType[]>(JSON.parse(localStorage.getItem('bikes') || '[]'));
+
+    useEffect(() => {
+        localStorage.setItem('bikes', JSON.stringify(allBikes));
+    }, [allBikes]);
+
     function onSubmit(event: any) {
         event.preventDefault();
 
-        console.log(bikeData);
+        if (!validation()) {
+            return;
+        }
 
-        console.log("Form Submitted...");
+        setAllBikes(bikes => [...bikes, bikeData]);
+
+        toast.success("Bike added successfully...");
+
+        setBikeData({
+            id: Math.floor(Math.random() * 10000),
+            brand: "",
+            bikeName: "",
+            bikePrice: 0,
+            fuelType: "",
+            features: []
+        });
+
+    }
+
+
+    const onHandleChange = (e: any) => {
+        const { name, value } = e.target;
+
+        setBikeData(bikeData => ({ ...bikeData, [name]: (name === 'bikePrice') ? Number(value) : value }))
+    }
+
+    const onChangeFeatures = (e: any) => {
+        const { value, checked } = e.target;
+
+        setBikeData(bikeData => ({ ...bikeData, features: (checked) ? [...bikeData.features, value] : bikeData.features.filter(features => features !== value) }))
+    }
+
+    function validation() {
+        const error: any = {};
+
+        if (!bikeData.brand) error.brand = "Bike brand is required";
+
+        if (!bikeData.bikeName) error.bikeName = "Bike name is required";
+
+        if (!bikeData.bikePrice) error.bikePrice = "Bike price is required";
+
+        if (bikeData.bikePrice < 0) error.bikePrice = "Bike price is invalid";
+
+        if (!bikeData.fuelType) error.fuelType = "Fuel type is required";
+
+        if (bikeData.features.length < 1) error.features = "Features is required";
+
+        setError(error);
+
+        return Object.keys(error).length === 0;
     }
 
     return (
@@ -45,13 +95,14 @@ export default function About() {
                 <form className="space-y-6" onSubmit={onSubmit}>
                     {/* Brand Selection */}
                     <div>
-                        <label htmlFor="bikeBrand" className="block text-sm font-semibold text-gray-700 mb-2">Brand {bikeData.brand}</label>
-                        <select onChange={(e => setBikeData({ ...bikeData, brand: e.target.value }))} name="bikeBrand" id="bikeBrand" className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block transition">
+                        <label htmlFor="brand" className="block text-sm font-semibold text-gray-700 mb-2">Brand {bikeData.brand}</label>
+                        <select value={bikeData.brand} onChange={onHandleChange} name="brand" id="brand" className={`w-full px-4 py-2.5 ${error.brand ? ' border-red-500' : ' border-gray-300'}  bg-red-100-50 border text-gray-900 text-sm rounded-lg  focus:ring-blue-500 focus:border-blue-500 block transition`}>
                             <option>Select Brand</option>
                             {brandName.map((brand, idx) => {
                                 return <option key={idx} value={brand}>{brand}</option>
                             })}
                         </select>
+                        {error.brand && <p className="text-red-600 text-sm">{error.brand}</p>}
                     </div>
 
                     {/* Name & Price Row */}
@@ -59,21 +110,26 @@ export default function About() {
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-2">Name</label>
                             <input
-                                onChange={(e => setBikeData({ ...bikeData, bikeName: e.target.value }))}
+                                value={bikeData.bikeName}
+                                onChange={onHandleChange}
                                 type="text"
                                 name="bikeName"
                                 placeholder="eg: Himalayan"
-                                className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                                className={`w-full px-4 py-2 bg-gray-50 border ${error.bikeName ? 'border-red-500' : 'border-gray-300'} rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition`}
                             />
+                            {error.bikeName && <p className="text-red-500 text-sm">{error.bikeName}</p>}
                         </div>
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-2">Expected Price</label>
                             <input
+                                value={bikeData.bikePrice}
+                                onChange={onHandleChange}
                                 type="number"
                                 name="bikePrice"
                                 placeholder="₹ 0.00"
-                                className="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+                                className={`w-full px-4 py-2 bg-gray-50 border ${error.bikePrice ? 'border-red-500' : 'border-gray-300'} rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none transition`}
                             />
+                            {error.bikePrice && <p className="text-red-500 text-sm">{error.bikePrice}</p>}
                         </div>
                     </div>
 
@@ -87,12 +143,15 @@ export default function About() {
                                         type="radio"
                                         name="fuelType"
                                         value={fuel}
+                                        checked={bikeData.fuelType === fuel}
+                                        onChange={onHandleChange}
                                         className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
                                     />
                                     <span className="ml-2 text-sm text-gray-600 group-hover:text-gray-900 transition">{fuel}</span>
                                 </label>
                             })}
                         </div>
+                        {error.fuelType && <p className="text-red-500 text-sm">{error.fuelType}</p>}
                     </div>
 
                     {/* Features */}
@@ -102,13 +161,18 @@ export default function About() {
                             {features.map((feature, idx) => {
                                 return <label key={idx} className="inline-flex items-center cursor-pointer group">
                                     <input
+                                        value={feature}
+                                        checked={bikeData.features.includes(feature)}
+                                        name="features"
                                         type="checkbox"
+                                        onChange={onChangeFeatures}
                                         className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                                     />
                                     <span className="ml-2 text-sm text-gray-600 group-hover:text-gray-900 transition">{feature}</span>
                                 </label>
                             })}
                         </div>
+                        {error.fuelType && <p className="text-red-500 text-sm mt-1">{error.fuelType}</p>}
                     </div>
 
                     {/* Submit Button */}
