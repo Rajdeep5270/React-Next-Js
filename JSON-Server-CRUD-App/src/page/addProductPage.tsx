@@ -1,10 +1,9 @@
 import { useState } from "react";
 import type { productType } from "../utils/type";
 import { useNavigate } from "react-router";
+import { productCategory, setDataInServer } from "../services/productService";
 
 export default function addProductPage() {
-
-    const productCategory = ["Fashion", "Gaming", "Electronics", "Kitchen"];
 
     const [productData, setProductData] = useState<productType>({
         product_name: "",
@@ -30,9 +29,7 @@ export default function addProductPage() {
 
         if (!validation()) return;
 
-        console.log("Product Data : ", productData);
-
-        setDataInServer();
+        setDataInServer(productData);
 
         setProductData({
             product_name: "",
@@ -44,13 +41,6 @@ export default function addProductPage() {
         });
 
         navigate("/view-product")
-    }
-
-    async function setDataInServer() {
-        await fetch("http://localhost:8080/products", {
-            method: "POST",
-            body: JSON.stringify(productData)
-        });
     }
 
     function validation() {

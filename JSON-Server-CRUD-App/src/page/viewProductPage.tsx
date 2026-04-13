@@ -1,22 +1,20 @@
 import { useEffect, useState } from "react";
-import type { productType } from "../utils/type";
+import type { productTypeWithId } from "../utils/type";
+import { deleteProduct, fetchAll } from "../services/productService";
 
 export default function viewProductPage() {
 
-    const [allProductsData, setAllProductsData] = useState<productType[]>([]);
+    const [allProductsData, setAllProductsData] = useState<productTypeWithId[]>([]);
 
     useEffect(() => {
         fetchAllProducts();
     }, [])
 
     async function fetchAllProducts() {
-        const res = await fetch("http://localhost:8080/products");
-        const allData = await res.json();
+        const allData = await fetchAll();
 
         setAllProductsData(allData);
     }
-
-    console.log(allProductsData);
 
     return (
         <div className="min-h-screen bg-slate-50 py-10 px-4 dark:bg-slate-950 sm:px-6 lg:px-8">
@@ -93,7 +91,7 @@ export default function viewProductPage() {
                                             <button className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
                                                 Edit
                                             </button>
-                                            <button className="text-rose-600 hover:text-rose-900 dark:text-rose-400 dark:hover:text-rose-300">
+                                            <button onClick={() => deleteProduct(p.id)} className="text-rose-600 hover:text-rose-900 dark:text-rose-400 dark:hover:text-rose-300">
                                                 Delete
                                             </button>
                                         </td>

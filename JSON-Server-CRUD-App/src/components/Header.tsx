@@ -15,7 +15,7 @@ export default function Header() {
 
                     <nav className="hidden md:block">
                         <ul className="flex items-center gap-8 text-sm font-medium text-slate-600 dark:text-slate-400">
-                            <li><Link to="/" className="transition-colors hover:text-indigo-600 dark:hover:text-indigo-400">Home</Link></li>
+                            <li><Link to="/" className="transition-colors hover:text-indigo-600 dark:hover:text-indigo-400">Product Catalog</Link></li>
                             <li><Link to="add-product" className="transition-colors hover:text-indigo-600 dark:hover:text-indigo-400">Add Product</Link></li>
                             <li><Link to="view-product" className="transition-colors hover:text-indigo-600 dark:hover:text-indigo-400">View Product</Link></li>
                         </ul>
