@@ -22,12 +22,29 @@ export default function Header() {
                     </nav>
 
                     <div className="flex items-center gap-3">
-                        <a href="#" className="hidden px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:text-indigo-600 dark:text-slate-300 sm:block">
-                            Log in
-                        </a>
-                        <a href="#" className="inline-flex items-center justify-center rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-slate-800 hover:shadow-indigo-500/20 active:scale-95 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100">
-                            Get Started
-                        </a>
+                        <Link
+                            to="add-to-cart"
+                            className="group relative flex items-center p-2 text-slate-600 transition-colors hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
+                            aria-label="View Cart"
+                        >
+                            {/* Shopping Cart Icon */}
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="h-6 w-6 transition-transform group-hover:scale-110"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+                                />
+
+                            </svg>
+
+                        </Link>
                     </div>
 
                 </div>

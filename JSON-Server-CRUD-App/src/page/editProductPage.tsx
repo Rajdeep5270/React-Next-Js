@@ -1,22 +1,37 @@
-import { useState } from "react";
-import type { productType } from "../utils/type";
-import { useNavigate } from "react-router";
-import { productCategory, setDataInServer } from "../services/productService";
+import { useEffect, useState } from "react";
+import type { productTypeWithId } from "../utils/type";
+import { useNavigate, useParams } from "react-router";
+import { fetchSingle, productCategory, updateSingle } from "../services/productService";
 
-export default function addProductPage() {
+export default function editProductPage() {
 
-   const [productData, setProductData] = useState<productType>({
+    const [productData, setProductData] = useState<productTypeWithId>({
+        id: "",
         product_name: "",
         product_category: "",
         product_price: 0,
         product_stock: 0,
-        product_image: "",
+        product_image: "For Error Handling",
         product_description: ""
-    }); 
+    });
 
     const [error, setError] = useState<any>({});
 
     const navigate = useNavigate();
+
+    const { id } = useParams();
+
+    useEffect(() => {
+        if (id) {
+            fetchSingleDataToUpdate();
+        }
+    }, [id]);
+
+    async function fetchSingleDataToUpdate() {
+        const singleData = await fetchSingle(id || "");
+
+        setProductData(singleData);
+    }
 
     function onHandleChange(e: any) {
         const { name, value } = e.target;
@@ -24,23 +39,16 @@ export default function addProductPage() {
         setProductData(old => ({ ...old, [name]: (name === 'product_price' || name === 'product_stock') ? Number(value) : value }));
     }
 
-    function onHandleSubmit(e: any) {
+    async function onHandleSubmit(e: any) {
         e.preventDefault();
 
         if (!validation()) return;
 
-        setDataInServer(productData);
+        const res = await updateSingle(productData);
 
-        setProductData({
-            product_name: "",
-            product_category: "",
-            product_price: 0,
-            product_stock: 0,
-            product_image: "",
-            product_description: ""
-        });
-
-        navigate("/view-product")
+        if (res) {
+            navigate("/view-product");
+        }
     }
 
     function validation() {
@@ -72,10 +80,10 @@ export default function addProductPage() {
                 {/* Header Section */}
                 <div className="mb-8 text-center">
                     <h1 className="text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
-                        Add New Product
+                        Edit Product
                     </h1>
                     <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
-                        Fill in the details below to list a new item in your inventory.
+                        Edit the details below to update a item in your inventory.
                     </p>
                 </div>
 
@@ -171,6 +179,7 @@ export default function addProductPage() {
                                 Image URL
                             </label>
                             <div className="mt-2">
+                                <img src={productData.product_image} width={100} alt="" />
                                 <input
                                     type="text"
                                     id="product_image"
@@ -207,7 +216,7 @@ export default function addProductPage() {
                         <div className="sm:col-span-2 mt-4">
                             <button
                                 type="submit"
-                                className="w-full rounded-xl bg-indigo-600 px-6 py-3 text-center text-sm font-semibold text-white shadow-md hover:bg-indigo-500 focus-visible:outline-2  focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all active:scale-[0.98]"
+                                className="w-full rounded-xl bg-yellow-600 px-6 py-3 text-center text-sm font-semibold text-white shadow-md hover:bg-yellow-500 focus-visible:outline-2  focus-visible:outline-offset-2 focus-visible:outline-yellow-600 transition-all active:scale-[0.98]"
                             >
                                 Upload Product
                             </button>

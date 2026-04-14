@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchAll, productCategory } from "../services/productService";
 import type { productTypeWithId } from "../utils/type";
+import { Link } from "react-router";
 
 export default function homePage() {
 
@@ -68,9 +69,6 @@ export default function homePage() {
                                 </svg>
                             </div>
                         </div>
-                        <button className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors">
-                            New Arrivals
-                        </button>
                     </div>
                 </div>
 
@@ -78,44 +76,44 @@ export default function homePage() {
                 {filteredProduct.length > 0 ? (
                     <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
                         {filteredProduct.map((product, index) => (
-                            <div key={index} className="group relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
-                                {/* Image Container */}
-                                <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden bg-slate-200 dark:bg-slate-800">
-                                    <img
-                                        src={product.product_image}
-                                        alt={product.product_name}
-                                        className="h-72 w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
-                                    />
-                                </div>
+                            <Link key={index} to={`product-detail/${product.id}`}>
+                                <div className="group relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all hover:shadow-md dark:border-slate-800 dark:bg-slate-900">
+                                    {/* Image Container */}
+                                    <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden bg-slate-200 dark:bg-slate-800">
+                                        <img
+                                            src={product.product_image}
+                                            alt={product.product_name}
+                                            className="h-72 w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                                        />
+                                    </div>
 
-                                {/* Content Section */}
-                                <div className="flex flex-1 flex-col p-5">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
-                                            <a href="#">
+                                    {/* Content Section */}
+                                    <div className="flex flex-1 flex-col p-5">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <h2 className="text-sm font-semibold text-slate-900 dark:text-white">
                                                 <span aria-hidden="true" className="absolute inset-0" />
                                                 {product.product_name}
-                                            </a>
-                                        </h2>
-                                        <p className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
-                                            ${product.product_price}
+                                            </h2>
+                                            <p className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
+                                                ${product.product_price}
+                                            </p>
+                                        </div>
+
+                                        <p className="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400 line-clamp-2">
+                                            {product.product_description}
                                         </p>
-                                    </div>
 
-                                    <p className="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400 line-clamp-2">
-                                        {product.product_description}
-                                    </p>
-
-                                    <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4 dark:border-slate-800">
-                                        <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/10 dark:bg-emerald-400/10 dark:text-emerald-400">
-                                            In Stock
-                                        </span>
-                                        <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer">
-                                            View Details &rarr;
-                                        </span>
+                                        <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4 dark:border-slate-800">
+                                            <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/10 dark:bg-emerald-400/10 dark:text-emerald-400">
+                                                In Stock
+                                            </span>
+                                            <span className="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline cursor-pointer">
+                                                View Details &rarr;
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 ) : (

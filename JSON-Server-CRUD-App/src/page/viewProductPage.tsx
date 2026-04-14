@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { productTypeWithId } from "../utils/type";
 import { deleteProduct, fetchAll } from "../services/productService";
+import { useNavigate } from "react-router";
 
 export default function viewProductPage() {
 
@@ -9,6 +10,8 @@ export default function viewProductPage() {
     useEffect(() => {
         fetchAllProducts();
     }, [])
+
+    const navigate = useNavigate();
 
     async function fetchAllProducts() {
         const allData = await fetchAll();
@@ -88,7 +91,7 @@ export default function viewProductPage() {
                                             {p.product_description}
                                         </td>
                                         <td className="px-6 py-4 text-sm font-medium space-x-3">
-                                            <button className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
+                                            <button onClick={() => navigate(`/edit-product/${p.id}`)} className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
                                                 Edit
                                             </button>
                                             <button onClick={() => deleteProduct(p.id)} className="text-rose-600 hover:text-rose-900 dark:text-rose-400 dark:hover:text-rose-300">
