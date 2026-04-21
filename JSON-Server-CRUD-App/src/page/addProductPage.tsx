@@ -5,14 +5,14 @@ import { productCategory, setDataInServer } from "../services/productService";
 
 export default function addProductPage() {
 
-   const [productData, setProductData] = useState<productType>({
+    const [productData, setProductData] = useState<productType>({
         product_name: "",
         product_category: "",
         product_price: 0,
         product_stock: 0,
         product_image: "",
         product_description: ""
-    }); 
+    });
 
     const [error, setError] = useState<any>({});
 

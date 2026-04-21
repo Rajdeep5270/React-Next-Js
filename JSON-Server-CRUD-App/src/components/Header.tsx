@@ -27,7 +27,6 @@ export default function Header() {
                             className="group relative flex items-center p-2 text-slate-600 transition-colors hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400"
                             aria-label="View Cart"
                         >
-                            {/* Shopping Cart Icon */}
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"

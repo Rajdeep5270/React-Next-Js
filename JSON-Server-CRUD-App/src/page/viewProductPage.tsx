@@ -6,6 +6,16 @@ import { useNavigate } from "react-router";
 export default function viewProductPage() {
 
     const [allProductsData, setAllProductsData] = useState<productTypeWithId[]>([]);
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [itemPerPage, setItemPerPage] = useState<number>(10);
+
+    const totalItems = allProductsData.length;
+    const totalPages = Math.ceil(totalItems / itemPerPage);
+
+    const startIndex = (currentPage - 1) * itemPerPage;
+    const endIndex = startIndex + itemPerPage;
+
+    const currentProducts = allProductsData.slice(startIndex, endIndex);
 
     useEffect(() => {
         fetchAllProducts();
@@ -44,7 +54,7 @@ export default function viewProductPage() {
                 <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
-                            <thead className="bg-slate-50 dark:bg-slate-800/50">
+                            <thead className="bg-slate-50 dark:bg-slate-800/50 sticky top-0 bg-gray-800 z-10">
                                 <tr>
                                     <th className="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">No.</th>
                                     <th className="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">Product</th>
@@ -55,11 +65,11 @@ export default function viewProductPage() {
                                     <th className="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-                                {allProductsData.map((p, idx) => (
+                            <tbody className="divide-y overflow-y-auto divide-slate-200 dark:divide-slate-800">
+                                {currentProducts.map((p, idx) => (
                                     <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
                                         <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
-                                            {idx + 1}
+                                            {startIndex + idx + 1}
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
@@ -105,6 +115,21 @@ export default function viewProductPage() {
                     </div>
                 </div>
 
+                <div>
+                    {[...Array(totalPages)].map((_, idx) => {
+                        return <button key={idx} onClick={() => setCurrentPage(idx + 1)} className="px-3 py-4 mt-3 border-2 ml-2 text-white">{idx + 1}</button>
+                    })}
+
+                    <select onChange={e => {
+                        setItemPerPage(Number(e.target.value));
+                        setCurrentPage(1);
+                    }} name="" id="">
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
             </div>
         </div>
     );

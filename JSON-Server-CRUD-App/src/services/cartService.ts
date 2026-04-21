@@ -16,3 +16,9 @@ export const fetchAll = async () => {
 
     return allData;
 }
+
+export const deleteCart = async (id: string) => {
+    const res = await fetch(cartAPI + id, {
+        method: "DELETE"
+    });
+}

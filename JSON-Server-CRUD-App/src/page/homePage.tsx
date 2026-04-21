@@ -1,37 +1,35 @@
 import { useEffect, useState } from "react";
-import { fetchAll, productCategory } from "../services/productService";
+import { fetchAll } from "../services/productService";
 import type { productTypeWithId } from "../utils/type";
 import { Link } from "react-router";
 
 export default function homePage() {
 
+    const [allProduct, setAllProduct] = useState<productTypeWithId[]>([]);
+    const [allCategories, setAllCategories] = useState<string[]>([]);
+    const [filterCategory, setFilterCategory] = useState<string>("");
+
     useEffect(() => {
         fetchAllProducts();
     }, [])
 
-    const [allProduct, setAllProduct] = useState<productTypeWithId[]>([]);
-    const [filteredProduct, setFilteredProduct] = useState<productTypeWithId[]>([])
+    useEffect(() => {
+        let allCategory: any = new Set(allProduct.map(product => product.product_category));
+
+        allCategory = Array.from(allCategory);
+
+        setAllCategories(allCategory);
+    }, [allProduct]);
 
     async function fetchAllProducts() {
         const allData = await fetchAll();
 
         setAllProduct(allData);
-
-        setFilteredProduct(allData);
     }
 
-    function filterProduct(e: any) {
-        const value = e.target.value;
+    const filteredProduct = (filterCategory === "") ? allProduct : allProduct.filter(product => product.product_category === filterCategory);
 
-        if (value === "") {
-            setFilteredProduct(allProduct);
-            return;
-        }
-
-        const filteredCategory = allProduct.filter(pro => pro.product_category === value);
-
-        setFilteredProduct(filteredCategory);
-    }
+    console.log(filteredProduct);
 
     return (
         <div className="min-h-screen bg-slate-50 py-10 px-4 dark:bg-slate-950 sm:px-6 lg:px-8">
@@ -49,13 +47,12 @@ export default function homePage() {
                     </div>
                     <div className="mt-4 sm:ml-16 sm:mt-0 flex gap-3">
                         <div className="relative">
-                            <select
-                                onChange={filterProduct}
+                            <select onChange={(e) => setFilterCategory(e.target.value)}
                                 name="selectCategory"
                                 className="appearance-none w-full rounded-lg bg-white pl-4 pr-10 py-2.5 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 transition-all duration-200 hover:bg-slate-50 hover:ring-slate-400 hover:shadow-md dark:bg-slate-900 dark:text-white dark:ring-slate-700 dark:hover:bg-slate-800 dark:hover:ring-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-600 cursor-pointer"
                             >
-                                <option value="">All Categories</option>
-                                {productCategory.map((cat, idx) => (
+                                <option value="">All</option>
+                                {allCategories.map((cat, idx) => (
                                     <option key={idx} value={cat} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">
                                         {cat}
                                     </option>
@@ -133,4 +130,4 @@ export default function homePage() {
             </div>
         </div >
     );
-}
+};
