@@ -17,6 +17,22 @@ export default function viewProductPage() {
 
     const currentProducts = allProductsData.slice(startIndex, endIndex);
 
+    function getPagination(currentPage: number, totalPages: number) {
+        if (totalPages <= 5) {
+            return Array.from({ length: totalPages }, (_, i) => i + 1);
+        }
+
+        if (currentPage <= 2) {
+            return [1, 2, "...", totalPages];
+        }
+
+        if (currentPage >= totalPages - 1) {
+            return [1, "...", totalPages - 1, totalPages];
+        }
+
+        return [1, "...", currentPage, "...", totalPages];
+    }
+
     useEffect(() => {
         fetchAllProducts();
     }, [])
@@ -52,20 +68,21 @@ export default function viewProductPage() {
 
                 {/* Table Card */}
                 <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
-                    <div className="overflow-x-auto">
+                    <div className={`${currentProducts.length > 10 ? "overflow-y-auto max-h-200" : ""}`}>
                         <table className="w-full text-left border-collapse">
-                            <thead className="bg-slate-50 dark:bg-slate-800/50 sticky top-0 bg-gray-800 z-10">
+                            {/* Table Header */}
+                            <thead className="sticky top-0 z-20 border-b border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-800/50">
                                 <tr>
-                                    <th className="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">No.</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">Product</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">Category</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">Price</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">Stock</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">Description</th>
-                                    <th className="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">Actions</th>
+                                    {["No.", "Product", "Category", "Price", "Stock", "Description", "Actions"].map((header) => (
+                                        <th key={header} className="px-6 py-4 text-sm font-semibold text-slate-900 dark:text-white">
+                                            {header}
+                                        </th>
+                                    ))}
                                 </tr>
                             </thead>
-                            <tbody className="divide-y overflow-y-auto divide-slate-200 dark:divide-slate-800">
+
+                            {/* Table Body */}
+                            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
                                 {currentProducts.map((p, idx) => (
                                     <tr key={idx} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
                                         <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
@@ -111,26 +128,87 @@ export default function viewProductPage() {
                                     </tr>
                                 ))}
                             </tbody>
+
+                            {/* Table Footer with Pagination */}
+                            <tfoot className="sticky bottom-0 z-20  bg-slate-50/50 dark:bg-slate-800/20">
+                                <tr>
+                                    <td colSpan={7} className="px-6 py-4">
+                                        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+
+                                            {/* Items Per Page */}
+                                            <div className="flex items-center gap-3">
+                                                <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Show</span>
+                                                <select
+                                                    value={itemPerPage}
+                                                    onChange={(e) => {
+                                                        setItemPerPage(Number(e.target.value));
+                                                        setCurrentPage(1);
+                                                    }}
+                                                    className="h-9 w-20 rounded-lg border border-slate-200 bg-white px-2 text-sm font-medium text-slate-700 outline-none transition-all hover:border-slate-300 focus:ring-2 focus:ring-indigo-500/20 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-300 dark:hover:border-slate-700"
+                                                >
+                                                    {[10, 20, 50, 100].map(val => (
+                                                        <option key={val} value={val}>{val}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                            {/* Navigation Controls */}
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                                    disabled={currentPage === 1}
+                                                    className="px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800"
+                                                >
+                                                    Previous
+                                                </button>
+
+                                                <div className="flex items-center gap-1">
+                                                    {getPagination(currentPage, totalPages).map((page, idx) => {
+
+                                                        if (page === "...") {
+                                                            return (
+                                                                <span key={idx} className="px-2 text-slate-400">
+                                                                    ...
+                                                                </span>
+                                                            );
+                                                        }
+
+                                                        const isActive = currentPage === page;
+
+                                                        return (
+                                                            <button
+                                                                key={idx}
+                                                                onClick={() => setCurrentPage(page as number)}
+                                                                className={`h-9 min-w-[36px] px-2 flex items-center justify-center rounded-lg text-sm font-semibold transition-all ${isActive
+                                                                    ? "bg-indigo-600 text-white shadow-sm shadow-indigo-500/40"
+                                                                    : "text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+                                                                    }`}
+                                                            >
+                                                                {page}
+                                                            </button>
+                                                        );
+                                                    })}
+                                                </div>
+
+                                                <button
+                                                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                                    disabled={currentPage === totalPages}
+                                                    className="px-3 py-1.5 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors dark:bg-slate-900 dark:border-slate-800 dark:text-slate-400 dark:hover:bg-slate-800"
+                                                >
+                                                    Next
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
 
-                <div>
-                    {[...Array(totalPages)].map((_, idx) => {
-                        return <button key={idx} onClick={() => setCurrentPage(idx + 1)} className="px-3 py-4 mt-3 border-2 ml-2 text-white">{idx + 1}</button>
-                    })}
 
-                    <select onChange={e => {
-                        setItemPerPage(Number(e.target.value));
-                        setCurrentPage(1);
-                    }} name="" id="">
-                        <option value="10">10</option>
-                        <option value="20">20</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                    </select>
-                </div>
             </div>
-        </div>
+        </div >
     );
 }
